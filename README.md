@@ -8,15 +8,15 @@ Jupyter notebooks are self-documenting.
 
 ## Basic Reproduction Number
 
-[notebook](Basic%20Reproduction%20Number.ipynb)
+[notebook](Basic-Reproduction-Number.ipynb)
 
 ## SEIR model
 
-[notebook](SEIR%20with%20Social%20Distancing.ipynb)
+[notebook](SEIR-with-Social-Distancing.ipynb)
 
 ## Visualizing and analyzing current situation
 
-[notebook](Visualize%20Current%20State.ipynb)
+[notebook](Visualize-Analyze-Current-State.ipynb)
 
 # What's coming?
 
