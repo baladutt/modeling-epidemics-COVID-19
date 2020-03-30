@@ -45,6 +45,8 @@ Jupyter notebooks are self-documenting.
 
 * [Why outbreaks like coronavirus spread exponentially, and how to 'flatten the curve'](https://www.washingtonpost.com/graphics/2020/world/corona-simulator/)
 * [Outbreak - play simulation](https://www.meltingasphalt.com/interactive/outbreak/)
+* [Fighting COVID-19 with Epidemiology: A Johns Hopkins Teach-Out](https://www.coursera.org/learn/covid19-epidemiology?utm_medium=email&utm_source=other&utm_campaign=partner.8.opencourse.targetedmessages.marketing~partner.8.KgPy15eFTxqdgao_YqVH5g), a free two-week learning event, beginning Tuesday, March 31
+* [Epidemiology in Public Health Practice Specialization](https://www.coursera.org/specializations/professional-epidemiology?utm_medium=email&utm_source=other&utm_campaign=partner.8.opencourse.targetedmessages.marketing~partner.8.KgPy15eFTxqdgao_YqVH5g), an on-demand five-course sequence that goes into even greater depth about the field and its tools, available now
  
 # About
 
