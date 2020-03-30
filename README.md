@@ -49,3 +49,7 @@ Jupyter notebooks are self-documenting.
 # About
 
 Email me: bala.dutt@gmail.com
+
+Thanks to wonderful teachers of Data Science and Engineering, Computer Science Department, BITS Pilani, especially,
+    * Prof Shan - S. Balasubramaniam
+    * Prof Anita - Anita Ramachandran
