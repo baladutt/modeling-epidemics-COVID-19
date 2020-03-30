@@ -48,4 +48,4 @@ Jupyter notebooks are self-documenting.
  
 # About
 
-Email me: bala.dutt@gmai.com
+Email me: bala.dutt@gmail.com
