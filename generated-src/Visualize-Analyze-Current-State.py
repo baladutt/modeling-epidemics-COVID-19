@@ -89,12 +89,41 @@ pyplot.plot(d2y_dt2, label="d2y/dt2")
 pyplot.legend()
 
 
+# ## Compute SEIR parametes - alpha, beta, gamma
+
+# In[8]:
+
+
+countries = list([countryToAnalyze, "Pakistan"])
+pyplot.figure(1)
+
+#This is incomplete - WIP
+for country in countries:
+    print(country)
+    confirmedTSDf = confirmedDf.loc[confirmedDf["Country/Region"] == country].T[4:]
+    recoveredTSDf = recoveredDf.loc[recoveredDf["Country/Region"] == country].T[4:]
+    deathsTSDf = deathsDf.loc[deathsDf["Country/Region"] == country].T[4:]
+    removedArr = recoveredTSDf.values + deathsTSDf.values
+    dR_dt= np.diff(removedArr.flatten())
+    confirmedArr = confirmedTSDf[1:].values.flatten()
+    confirmedArr[confirmedArr == 0] = 0.0001 # to prevent divide by zero
+    gamma = dR_dt / confirmedArr
+    #print(confirmedTSDf)
+    #print(recoveredTSDf)
+    #print(removedArr)
+    #print("dr_dt",dR_dt)
+    #print(gamma)
+    pyplot.plot(gamma, label="gamma for "+country)
+    
+pyplot.legend()
+
+
 # # Analyze statewise for India 
 # 
 # Download data from - https://www.kaggle.com/sudalairajkumar/covid19-in-india
 # 
 
-# In[8]:
+# In[9]:
 
 
 from datetime import datetime
@@ -127,7 +156,7 @@ icmrTestingDf = pd.read_csv(icmrTestingFile, parse_dates=[1], date_parser=icmrDa
 
 # ## Capacity for maximum
 
-# In[9]:
+# In[10]:
 
 
 get_ipython().run_line_magic('matplotlib', 'inline')
@@ -160,7 +189,7 @@ pyplot.legend()
 
 # ## State-wise numbers
 
-# In[10]:
+# In[11]:
 
 
 covidIndiaLastDayDataDf = pd.DataFrame(columns=covidIndiaDataDf.columns.values)
@@ -203,7 +232,7 @@ for state in states:
 covidIndiaLastDayDataDf.fillna(0, inplace=True)
 
 
-# In[18]:
+# In[12]:
 
 
 import seaborn as sns
@@ -249,7 +278,7 @@ for index, row in data.iterrows():
 
 # ## Testing to positive - trend and ratio
 
-# In[12]:
+# In[13]:
 
 
 fig, ax1 = pyplot.subplots(figsize=(20,10))
@@ -273,7 +302,7 @@ pyplot.legend()
 # 
 # Lower the better
 
-# In[13]:
+# In[14]:
 
 
 #Penalty for delay since first case
@@ -294,13 +323,13 @@ display(indexData)
 
 # # Analyze a particular State
 
-# In[14]:
+# In[15]:
 
 
 covidStateDataDf = covidIndiaDataDf.loc[covidIndiaDataDf["State/UnionTerritory"]==stateToAnalyze]
 
 
-# In[15]:
+# In[16]:
 
 
 get_ipython().run_line_magic('matplotlib', 'inline')
@@ -309,7 +338,7 @@ pyplot.plot(covidStateDataDf["ConfirmedIndianNational"].values, label="Confirmed
 pyplot.legend()
 
 
-# In[16]:
+# In[17]:
 
 
 dy_dt= np.diff(covidStateDataDf["ConfirmedIndianNational"].values)
@@ -318,7 +347,7 @@ pyplot.plot(dy_dt, label="dy/dt")
 pyplot.legend()
 
 
-# In[17]:
+# In[18]:
 
 
 d2y_dt2= np.diff(dy_dt)
