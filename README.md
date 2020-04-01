@@ -11,7 +11,7 @@ These terms have now gotten into our vocabulary,
 * Quarantine (self, medical, apartment)
 * Aggressive Test strategy
 
-For Math lowers,
+For Math lovers,
 * R0
 * BRN
 * SEIR
