@@ -22,7 +22,7 @@ import sys
 get_ipython().system('{sys.executable} -m pip install kaggle')
 
 
-# In[4]:
+# In[5]:
 
 
 from kaggle.api.kaggle_api_extended import KaggleApi
@@ -43,7 +43,7 @@ print("datasets", api.dataset_list())
 import os
 
 print(os.listdir('./')) # This will print the content of current directory
-os.remove('covid19-in-india.zip') # This will remove file 
+#os.remove('covid19-in-india.zip') # This will remove file 
 
 files = api.dataset_download_files("sudalairajkumar/covid19-in-india/data")
 #files = api.competition_download_files("sudalairajkumar/covid19-in-india/data")
@@ -56,26 +56,26 @@ print(os.listdir('./')) # This will print the content of current directory
 #os.remove('covid19-in-india.zip') # This will remove file 
 
 
-# In[5]:
+# In[6]:
 
 
 get_ipython().run_line_magic('run', './Load-Data.ipynb')
 
 
-# In[6]:
+# In[7]:
 
 
 get_ipython().run_line_magic('run', './Basic-Reproduction-Number.ipynb')
 
 
-# In[7]:
+# In[8]:
 
 
 get_ipython().run_line_magic('run', './SEIR-with-Social-Distancing.ipynb')
 get_ipython().run_line_magic('run', './Visualize-Analyze-Current-State.ipynb')
 
 
-# In[8]:
+# In[9]:
 
 
 get_ipython().run_line_magic('run', './Extract-Python-Src.ipynb')

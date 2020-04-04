@@ -37,15 +37,13 @@ def predictValues(alpha, beta, gamma, nSteps, N):
 # In[4]:
 
 
-def computeGamma(infected, removed):    
+def computeGamma(infected, removed, axs):    
     dR_dt= np.diff(removed)
     infected[infected == 0] = 0.0001 # to prevent divide by zero
     gamma = dR_dt / infected[1:]
-    pyplot.plot(gamma, label='gamma')
-    pyplot.title('computeGamma')
-    pyplot.xticks(rotation=90)
-    pyplot.legend()
-    pyplot.show()  
+    axs[5].plot(gamma, label='gamma')
+    axs[5].set_title('computeGamma')
+    axs[5].tick_params(axis='x', rotation=90)
     return gamma.mean()
 
 
@@ -73,7 +71,7 @@ def computeLoss(yhat, infected, removed):
 
 
 import numpy as np
-def estimateParameters(infected, removed, N):
+def estimateParameters(infected, removed, N, axs):
     minLoss = -1
     minParams=[]
     lossHistory=[]
@@ -91,7 +89,7 @@ def estimateParameters(infected, removed, N):
     infected = infected[index : ]
     removed = removed[index : ]
     nSteps = len(infected)/10
-    gamma = computeGamma(infected, removed)
+    gamma = computeGamma(infected, removed, axs)
     for alpha in alphaSpace:
         for beta in betaSpace:
 #             for gamma in gammaSpace:
@@ -106,32 +104,28 @@ def estimateParameters(infected, removed, N):
             alphaHistory.append(alpha)
             betaHistory.append(beta)
             gammaHistory.append(gamma)
-    pyplot.plot(alphaHistory, label='alpha')
-    pyplot.plot(betaHistory, label='beta')
-    pyplot.plot(gammaHistory, label='gamma')
-    pyplot.title('paramsHistory')
-    pyplot.legend()
-    pyplot.show()            
-    pyplot.plot(lossHistory)
-    pyplot.title('lossHistory')
-    pyplot.legend()
-    pyplot.show()
-    pyplot.plot(minYhat[2,1:])
-    pyplot.title('minYhat[2,1:]')
-    pyplot.legend()
-    pyplot.show()
-    pyplot.plot(infected)
-    pyplot.title('infected')
-    pyplot.legend()
-    pyplot.show()
-    pyplot.plot(minYhat[3,1:])
-    pyplot.title('minYhat[3,1:]')
-    pyplot.legend()
-    pyplot.show()
-    pyplot.plot(removed)
-    pyplot.title('removed')
-    pyplot.legend()
-    pyplot.show()
+    axs[0].plot(alphaHistory, label='alpha')
+    axs[0].plot(betaHistory, label='beta')
+    axs[0].plot(gammaHistory, label='gamma')
+    axs[0].set_title('paramsHistory')
+    #axs[0].legend()            
+    axs[1].plot(lossHistory)
+    axs[1].set_title('lossHistory')
+    #axs[1].legend()
+    axs[2].plot(minYhat[2,1:])
+    axs[2].set_title('minYhat[2,1:]')
+    #axs[2].legend()
+    axs[3].plot(infected)
+    axs[3].set_title('infected')
+    #axs[3].legend()
+    axs[3].plot(minYhat[3,1:])
+    axs[3].set_title('minYhat[3,1:]')
+    axs[3].tick_params(axis='x', rotation=90)
+    #axs[3].legend()
+    axs[4].plot(removed)
+    axs[4].set_title('removed')
+    axs[4].tick_params(axis='x', rotation=90)
+    #axs[4].legend()
 #     Find index of minimum loss and return params for param history from that index
     return minParams
 
@@ -147,26 +141,36 @@ def estimateParameters(infected, removed, N):
 
 
 countries = list(["India", "Pakistan", "Italy", "Spain", "France", "Iran", "China", "Germany", "United Kingdom"])
-# countries = list([countryToAnalyze, "Pakistan"])
 
 from pandas import *
 pyplot.figure(1)
 paramsResultDf = DataFrame({'Country': [], 'Params': []})
 
-#This is incomplete - WIP
 for country in countries:
-    print(country)
+    fig, axs = pyplot.subplots(1,6)
+    fig.set_size_inches(30, 5)
     N = int(populationDf [populationDf['Country']==country]['Population'])
-#     print('Population of ', country, 'is :: ', N )
     confirmedTSDf = confirmedDf.loc[confirmedDf["Country/Region"] == country].sum().T[4:]
     recoveredTSDf = recoveredDf.loc[recoveredDf["Country/Region"] == country].sum().T[4:]
     deathsTSDf = deathsDf.loc[deathsDf["Country/Region"] == country].sum().T[4:]
-#     removedArr = recoveredTSDf.values + deathsTSDf.values
-    params = estimateParameters(confirmedTSDf, (recoveredTSDf+deathsTSDf), N)
+    params = estimateParameters(confirmedTSDf, (recoveredTSDf+deathsTSDf), N, axs)
     paramsResultDf = paramsResultDf.append({'Country': country , 'Params': params}, ignore_index=True)
-N = int(populationDf [populationDf['Country']=='United States']['Population'])
-params_us = estimateParameters(total_infected_us_timeseries, total_removed_us_timeseries, N)  
-paramsResultDf = paramsResultDf.append({'Country': "US" , 'Params': params_us}, ignore_index=True)
-print(paramsResultDf)
     
+fig, axs = pyplot.subplots(1,6)
+fig.set_size_inches(18.5, 5)    
+N = int(populationDf [populationDf['Country']=='United States']['Population'])
+params_us = estimateParameters(total_infected_us_timeseries, total_removed_us_timeseries, N, axs)  
+paramsResultDf = paramsResultDf.append({'Country': "US" , 'Params': params_us}, ignore_index=True)
+
+
+# In[9]:
+
+
+display(paramsResultDf)
+
+
+# In[ ]:
+
+
+
 
