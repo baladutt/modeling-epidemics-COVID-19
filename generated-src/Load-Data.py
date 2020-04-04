@@ -61,11 +61,25 @@ provinceDf = pd.read_csv(provinceCsv)
 regionDf = pd.read_csv(regionCsv)   
 
 
+# ## Load for USA
+
+# In[5]:
+
+
+usDataCsv = "us-counties.csv"
+# Data can be downloaded from : https://www.kaggle.com/fireballbyedimyrnmom/us-counties-covid-19-dataset
+usDf = pd.read_csv(usDataCsv) 
+usDf_group_by_date = usDf.groupby('date').sum()
+print(usDf_group_by_date)
+total_infected_us_timeseries = usDf_group_by_date['cases']
+total_removed_us_timeseries = usDf_group_by_date['deaths']
+
+
 # ## Analyze statewise for India 
 # 
 # Download data from - https://www.kaggle.com/sudalairajkumar/covid19-in-india
 
-# In[5]:
+# In[6]:
 
 
 from datetime import datetime
