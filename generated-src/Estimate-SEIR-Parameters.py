@@ -26,11 +26,11 @@ pyplot.rcParams['figure.figsize'] = 8, 15
 
 get_ipython().run_line_magic('run', './SEIR.ipynb')
 def predictValues(alpha, beta, gamma, nSteps, N):
-    init_vals = 1 - 1/N, 1/N, 0, 0
+    init_vals = N-1, 1, 0, 0
     params = alpha, beta, gamma
-    dt = .1
-    t = np.linspace(0, nSteps, int(nSteps/dt) + 1)
-    results = base_seir_model(init_vals, params, t)
+   
+    t = np.arange(nSteps)
+    results = population_seir_model(init_vals, params, t, N)
     return results
 
 
@@ -58,10 +58,13 @@ def computeLoss(yhat, infected, removed):
     else:
         offsetOfyHat = len(yhat[2, :])-len(infected)
     loss= infected[offsetOfinfected:] - yhat[2,offsetOfyHat:]
+    #print("loss", loss)
     l1 = (loss*loss).sum()
     
     loss= (removed[offsetOfinfected:] - yhat[3,offsetOfyHat:])
     l2 = (loss*loss).sum()
+    
+    #print("l1-l2", l1, l2)
     
     weightForRecovered = 0.1
     return weightForRecovered * l1 + (1 - weightForRecovered) * l2
@@ -80,21 +83,24 @@ def estimateParameters(infected, removed, N, axs):
     gammaHistory=[]
     minYhat = None
    
-    alphaSpace = np.arange(0.4,1,0.05)
-    betaSpace = np.arange(0.4,1,0.05)
-    gammaSpace = np.arange(0,1,0.05)
+    alphaSpace = np.arange(0.001,1,0.05)
+    betaSpace = np.arange(0.001,1,0.05)
+    gammaSpace = np.arange(0,1,0.001)
     for index in range(len(infected)):
         if(infected[index]!=0):
             break
     infected = infected[index : ]
     removed = removed[index : ]
-    nSteps = len(infected)/10
+    nSteps = len(infected)
     gamma = computeGamma(infected, removed, axs)
     for alpha in alphaSpace:
         for beta in betaSpace:
 #             for gamma in gammaSpace:
             
-            yhat = (predictValues(alpha, beta, gamma, nSteps, N)*N)
+            yhat = (predictValues(alpha, beta, gamma, nSteps, N))
+            #print("first value", yhat[:,0])
+            #print("last value", yhat[:,-1])
+            #print(yhat)
             loss = computeLoss(yhat, infected, removed)
             if(loss < minLoss) or (minLoss == -1):
                 minLoss = loss
@@ -113,12 +119,14 @@ def estimateParameters(infected, removed, N, axs):
     axs[1].plot(lossHistory)
     axs[1].set_title('lossHistory')
     
-    axs[2].plot(minYhat[2,1:]*N)
+    predInfected = minYhat[2,1:]
+    #print(predInfected)
+    axs[2].plot(predInfected)
     axs[2].set_title('pred-infected & infected')
     axs[2].plot(infected)
     axs[2].tick_params(axis='x', rotation=90)
     
-    axs[3].plot(minYhat[3,1:]*N)
+    axs[3].plot(minYhat[3,1:])
     axs[3].set_title('pred-removed & removed')
     axs[3].tick_params(axis='x', rotation=90)
     axs[3].plot(removed)
