@@ -31,9 +31,13 @@ Jupyter notebooks are self-documenting.
 
 [notebook](SEIR-with-Social-Distancing.ipynb)
 
+If you can't see images, use this [pdf](SEIR-with-Social-Distancing.pdf)
+
 ## Visualizing and analyzing current situation
 
 [notebook](Visualize-Analyze-Current-State.ipynb)
+
+If you can't see images, use this [pdf](Visualize-Analyze-Current-State.pdf)
 
 # What's coming?
 

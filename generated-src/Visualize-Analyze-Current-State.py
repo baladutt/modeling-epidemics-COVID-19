@@ -355,3 +355,197 @@ pyplot.figure(1)
 pyplot.plot(d2y_dt2, label="d2y/dt2")
 pyplot.legend()
 
+
+# In[19]:
+
+
+usDataCsv = "us-counties.csv"
+# Data can be downloaded from : https://www.kaggle.com/fireballbyedimyrnmom/us-counties-covid-19-dataset
+usDf = pd.read_csv(usDataCsv) 
+usDf_group_by_date = usDf.groupby('date').sum()
+print(usDf_group_by_date)
+total_infected_us_timeseries = usDf_group_by_date['cases']
+total_removed_us_timeseries = usDf_group_by_date['deaths']
+
+
+# In[20]:
+
+
+provinceCsv = "covid19-in-italy/covid19_italy_province.csv"
+regionCsv = "covid19-in-italy/covid19_italy_region.csv"
+N = 60000000
+try:
+    f = open(confirmedCsv)
+except IOError:
+    print('Download data from "https://www.kaggle.com/sudalairajkumar/covid19-in-italy"')
+    assert False
+finally:
+    f.close()
+    
+import pandas as pd
+
+provinceDf = pd.read_csv(provinceCsv)
+regionDf = pd.read_csv(regionCsv)   
+
+
+from matplotlib import pyplot
+import numpy as np
+from mlxtend.plotting import ecdf
+from scipy import stats
+get_ipython().run_line_magic('matplotlib', 'inline')
+
+provinceDf_group_by_date = provinceDf.groupby('Date').sum()
+regionDf_group_by_date = regionDf.groupby('Date').sum()
+
+total_positive_cases_timeseries = provinceDf_group_by_date['TotalPositiveCases']
+total_removed_cases_timeseries = regionDf_group_by_date['Recovered']+regionDf_group_by_date['Deaths']
+
+print(total_positive_cases_timeseries.values.flatten())
+incremental_positive_cases_timeseries = np.diff(total_positive_cases_timeseries.values.flatten())
+pyplot.figure(figsize=(15, 8))
+pyplot.xticks(rotation=90)
+ax = pyplot.axes()
+ax_bis = ax.twinx()
+ax.plot(total_positive_cases_timeseries, label='Total positive cases', color='blue')
+ax_bis.plot(incremental_positive_cases_timeseries, label='Incremental positive cases', color= 'red')
+ax.legend(loc=2)
+ax_bis.legend(loc=1)   
+pyplot.show()
+
+
+date_ = '2020-03-28T17:00:00'
+df_last_date = provinceDf[provinceDf['Date']==date_]
+df_last_date = df_last_date.groupby('RegionName').sum()
+
+# df_last_date = df_last_date.sortby('TotalPositiveCases')
+df_timeseries = df_last_date['TotalPositiveCases']
+df_timeseries = df_timeseries.sort_values(ascending=False)
+pyplot.figure(figsize=(15, 8))
+pyplot.xticks(rotation=90)
+pyplot.plot(df_timeseries)
+pyplot.show()
+
+
+df_timeseries = df_timeseries/df_timeseries.sum()
+print('Percentage of time series')
+pyplot.show()
+
+out_sum = np.cumsum(df_timeseries)
+pyplot.figure(figsize=(15, 8))
+pyplot.xticks(rotation=90)
+pyplot.plot(out_sum)
+pyplot.show()
+
+
+len_reg=len(df_last_date)
+x= np.arange(len_reg)
+x=x+1
+x = x/x.max()
+# pyplot.scatter(0.2, 0.8, s=100, color='red')
+pyplot.figure(figsize=(15, 8))
+pyplot.axhline(y=0.8,  color='red')
+# TODO : compute value of x for which y=0.8 and show
+pyplot.plot(x, out_sum)
+pyplot.show()
+
+
+# In[21]:
+
+
+get_ipython().run_line_magic('run', './SEIR-with-Social-Distancing.ipynb')
+def predictValues(alpha, beta, gamma, nSteps):
+    init_vals = 1 - 1/N, 1/N, 0, 0
+    params = alpha, beta, gamma
+    dt = .1
+    t = np.linspace(0, nSteps, int(nSteps/dt) + 1)
+    results = base_seir_model(init_vals, params, t)
+    return results
+
+
+# In[22]:
+
+
+def computeLoss(yhat, infected, removed):
+    loss= infected - yhat[2,1:]
+    lossSum = (loss*loss).sum()
+    
+    loss= (removed - yhat[3,1:])*10
+    lossSum = (loss*loss).sum() + lossSum
+    return lossSum
+
+
+# In[23]:
+
+
+import numpy as np
+def estimateParameters(infected, removed):
+    minLoss = -1
+    minParams=[]
+    lossHistory=[]
+    paramsHistory=[]
+    minYhat = None
+    nSteps = len(infected)/10
+    alphaSpace = np.arange(0,1,0.05)
+    betaSpace = np.arange(0,1,0.05)
+    gammaSpace = np.arange(0,1,0.05)
+    for alpha in alphaSpace:
+        for beta in betaSpace:
+            for gamma in gammaSpace:
+                yhat = (predictValues(alpha, beta, gamma, nSteps)*N)
+                loss = computeLoss(yhat, infected, removed)
+                if(loss < minLoss) or (minLoss == -1):
+                    minLoss = loss
+                    minParams = [alpha, beta, gamma]
+                    minYhat = yhat
+                lossHistory.append(loss)
+                paramsHistory.append([alpha, beta, gamma])
+    pyplot.plot(lossHistory)
+    pyplot.show()
+    pyplot.plot(minYhat[2,1:])
+    pyplot.show()
+    pyplot.plot(infected)
+    pyplot.show()
+    pyplot.plot(minYhat[3,1:])
+    pyplot.show()
+    pyplot.plot(removed)
+    pyplot.show()
+#     Find index of minimum loss and return params for param history from that index
+    return minParams
+
+
+# In[24]:
+
+
+params = estimateParameters(total_positive_cases_timeseries, total_removed_cases_timeseries)
+print(params)
+
+
+# In[25]:
+
+
+countries = list([countryToAnalyze, "Pakistan", "Italy", "Spain", "France", "Iran", "China", "Germany", "United Kingdom"])
+from pandas import *
+pyplot.figure(1)
+paramsResultDf = DataFrame({'Country': [], 'Params': []})
+
+#This is incomplete - WIP
+for country in countries:
+    print(country)
+    confirmedTSDf = confirmedDf.loc[confirmedDf["Country/Region"] == country].sum().T[4:]
+    recoveredTSDf = recoveredDf.loc[recoveredDf["Country/Region"] == country].sum().T[4:]
+    deathsTSDf = deathsDf.loc[deathsDf["Country/Region"] == country].sum().T[4:]
+#     removedArr = recoveredTSDf.values + deathsTSDf.values
+    params = estimateParameters(confirmedTSDf, (recoveredTSDf+deathsTSDf))
+    paramsResultDf = paramsResultDf.append({'Country': country , 'Params': params}, ignore_index=True)
+
+params_us = estimateParameters(total_infected_us_timeseries, total_removed_us_timeseries)  
+paramsResultDf = paramsResultDf.append({'Country': "US" , 'Params': params_us}, ignore_index=True)
+print(paramsResultDf)
+    
+
+
+# In[ ]:
+
+
+
+
