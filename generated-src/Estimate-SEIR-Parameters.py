@@ -24,7 +24,7 @@ pyplot.rcParams['figure.figsize'] = 8, 15
 # In[3]:
 
 
-get_ipython().run_line_magic('run', './SEIR-with-Social-Distancing.ipynb')
+get_ipython().run_line_magic('run', './SEIR.ipynb')
 def predictValues(alpha, beta, gamma, nSteps, N):
     init_vals = 1 - 1/N, 1/N, 0, 0
     params = alpha, beta, gamma
@@ -41,9 +41,9 @@ def computeGamma(infected, removed, axs):
     dR_dt= np.diff(removed)
     infected[infected == 0] = 0.0001 # to prevent divide by zero
     gamma = dR_dt / infected[1:]
-    axs[5].plot(gamma, label='gamma')
-    axs[5].set_title('computeGamma')
-    axs[5].tick_params(axis='x', rotation=90)
+    axs[4].plot(gamma, label='gamma')
+    axs[4].set_title('computeGamma')
+    axs[4].tick_params(axis='x', rotation=90)
     return gamma.mean()
 
 
@@ -104,28 +104,25 @@ def estimateParameters(infected, removed, N, axs):
             alphaHistory.append(alpha)
             betaHistory.append(beta)
             gammaHistory.append(gamma)
+    
     axs[0].plot(alphaHistory, label='alpha')
     axs[0].plot(betaHistory, label='beta')
     axs[0].plot(gammaHistory, label='gamma')
-    axs[0].set_title('paramsHistory')
-    #axs[0].legend()            
+    axs[0].set_title('paramsHistory')         
+    
     axs[1].plot(lossHistory)
     axs[1].set_title('lossHistory')
-    #axs[1].legend()
-    axs[2].plot(minYhat[2,1:])
-    axs[2].set_title('minYhat[2,1:]')
-    #axs[2].legend()
-    axs[3].plot(infected)
-    axs[3].set_title('infected')
-    #axs[3].legend()
-    axs[3].plot(minYhat[3,1:])
-    axs[3].set_title('minYhat[3,1:]')
+    
+    axs[2].plot(minYhat[2,1:]*N)
+    axs[2].set_title('pred-infected & infected')
+    axs[2].plot(infected)
+    axs[2].tick_params(axis='x', rotation=90)
+    
+    axs[3].plot(minYhat[3,1:]*N)
+    axs[3].set_title('pred-removed & removed')
     axs[3].tick_params(axis='x', rotation=90)
-    #axs[3].legend()
-    axs[4].plot(removed)
-    axs[4].set_title('removed')
-    axs[4].tick_params(axis='x', rotation=90)
-    #axs[4].legend()
+    axs[3].plot(removed)
+    
 #     Find index of minimum loss and return params for param history from that index
     return minParams
 
@@ -147,8 +144,9 @@ pyplot.figure(1)
 paramsResultDf = DataFrame({'Country': [], 'Params': []})
 
 for country in countries:
-    fig, axs = pyplot.subplots(1,6)
+    fig, axs = pyplot.subplots(1,5)
     fig.set_size_inches(30, 5)
+    fig.suptitle(country)
     N = int(populationDf [populationDf['Country']==country]['Population'])
     confirmedTSDf = confirmedDf.loc[confirmedDf["Country/Region"] == country].sum().T[4:]
     recoveredTSDf = recoveredDf.loc[recoveredDf["Country/Region"] == country].sum().T[4:]
@@ -156,7 +154,7 @@ for country in countries:
     params = estimateParameters(confirmedTSDf, (recoveredTSDf+deathsTSDf), N, axs)
     paramsResultDf = paramsResultDf.append({'Country': country , 'Params': params}, ignore_index=True)
     
-fig, axs = pyplot.subplots(1,6)
+fig, axs = pyplot.subplots(1,5)
 fig.set_size_inches(18.5, 5)    
 N = int(populationDf [populationDf['Country']=='United States']['Population'])
 params_us = estimateParameters(total_infected_us_timeseries, total_removed_us_timeseries, N, axs)  

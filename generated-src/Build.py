@@ -22,7 +22,7 @@ import sys
 get_ipython().system('{sys.executable} -m pip install kaggle')
 
 
-# In[5]:
+# In[4]:
 
 
 from kaggle.api.kaggle_api_extended import KaggleApi
@@ -56,26 +56,13 @@ print(os.listdir('./')) # This will print the content of current directory
 #os.remove('covid19-in-india.zip') # This will remove file 
 
 
-# In[6]:
+# In[5]:
 
 
 get_ipython().run_line_magic('run', './Load-Data.ipynb')
 
 
-# In[7]:
-
-
-get_ipython().run_line_magic('run', './Basic-Reproduction-Number.ipynb')
-
-
 # In[8]:
-
-
-get_ipython().run_line_magic('run', './SEIR-with-Social-Distancing.ipynb')
-get_ipython().run_line_magic('run', './Visualize-Analyze-Current-State.ipynb')
-
-
-# In[9]:
 
 
 get_ipython().run_line_magic('run', './Extract-Python-Src.ipynb')
@@ -84,5 +71,8 @@ get_ipython().run_line_magic('run', './Extract-Python-Src.ipynb')
 # In[ ]:
 
 
-
+get_ipython().run_line_magic('run', './Basic-Reproduction-Number.ipynb')
+get_ipython().run_line_magic('run', './SEIR-with-Social-Distancing.ipynb')
+get_ipython().run_line_magic('run', './Visualize-Analyze-Current-State.ipynb')
+get_ipython().run_line_magic('run', './Estimate-SEIR-Parameters.ipynb')
 

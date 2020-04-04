@@ -70,7 +70,7 @@ usDataCsv = "us-counties.csv"
 # Data can be downloaded from : https://www.kaggle.com/fireballbyedimyrnmom/us-counties-covid-19-dataset
 usDf = pd.read_csv(usDataCsv) 
 usDf_group_by_date = usDf.groupby('date').sum()
-print(usDf_group_by_date)
+#print(usDf_group_by_date)
 total_infected_us_timeseries = usDf_group_by_date['cases']
 total_removed_us_timeseries = usDf_group_by_date['deaths']
 

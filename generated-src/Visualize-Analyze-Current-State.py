@@ -43,6 +43,7 @@ pyplot.rcParams['figure.figsize'] = 8, 15
 confirmedTSDf = confirmedDf.loc[confirmedDf["Country/Region"] == countryToAnalyze].T[4:]
 pyplot.figure(1)
 pyplot.plot(confirmedTSDf)
+pyplot.xticks(rotation=90)
 
 
 # In[5]:
@@ -148,7 +149,7 @@ for state in states:
     stateDataDf.sort_values('Date',ascending=False,inplace=True)
     if stateDataDf.shape[0] != 0:
         covidIndiaLastDayDataDf = covidIndiaLastDayDataDf.append(stateDataDf.iloc[0])
-        dy_dt= np.diff(stateDataDf["ConfirmedIndianNational"].values)
+        dy_dt= np.diff(stateDataDf["Confirmed"].values.astype(int))
         d2y_dt2= np.diff(dy_dt)
         days = 0
         if len(stateDataDf.index) > 0:
@@ -176,7 +177,7 @@ for state in states:
 covidIndiaLastDayDataDf.fillna(0, inplace=True)
 
 
-# In[ ]:
+# In[10]:
 
 
 import seaborn as sns
@@ -190,7 +191,7 @@ sns.set()
 
 f, ax = pyplot.subplots(figsize=(12, 8))
 covidIndiaLastDayDataDf['Name of State / UT']=covidIndiaLastDayDataDf['State/UnionTerritory']
-covidIndiaLastDayDataDf['Total cases']=covidIndiaLastDayDataDf['ConfirmedIndianNational']+covidIndiaLastDayDataDf['ConfirmedForeignNational']
+covidIndiaLastDayDataDf['Total cases']=covidIndiaLastDayDataDf['Confirmed']
 covidIndiaLastDayDataDf['Cured/Discharged/Migrated']=covidIndiaLastDayDataDf['Cured']
 data = covidIndiaLastDayDataDf[['Name of State / UT','Total cases','Cured/Discharged/Migrated','Deaths', 'dy_dt', 'd2y_dt2', 'days']]
 
@@ -222,7 +223,7 @@ for index, row in data.iterrows():
 
 # ## Testing to positive - trend and ratio
 
-# In[ ]:
+# In[11]:
 
 
 fig, ax1 = pyplot.subplots(figsize=(20,10))
@@ -246,7 +247,7 @@ pyplot.legend()
 # 
 # Lower the better
 
-# In[ ]:
+# In[12]:
 
 
 #Penalty for delay since first case
@@ -267,13 +268,13 @@ display(indexData)
 
 # # Analyze a particular State
 
-# In[ ]:
+# In[13]:
 
 
 covidStateDataDf = covidIndiaDataDf.loc[covidIndiaDataDf["State/UnionTerritory"]==stateToAnalyze]
 
 
-# In[ ]:
+# In[14]:
 
 
 get_ipython().run_line_magic('matplotlib', 'inline')
@@ -282,16 +283,16 @@ pyplot.plot(covidStateDataDf["ConfirmedIndianNational"].values, label="Confirmed
 pyplot.legend()
 
 
-# In[ ]:
+# In[15]:
 
 
-dy_dt= np.diff(covidStateDataDf["ConfirmedIndianNational"].values)
+dy_dt= np.diff(covidStateDataDf["Confirmed"].values)
 pyplot.figure(1)
 pyplot.plot(dy_dt, label="dy/dt")
 pyplot.legend()
 
 
-# In[ ]:
+# In[16]:
 
 
 d2y_dt2= np.diff(dy_dt)
@@ -300,7 +301,7 @@ pyplot.plot(d2y_dt2, label="d2y/dt2")
 pyplot.legend()
 
 
-# In[ ]:
+# In[17]:
 
 
 
@@ -364,10 +365,4 @@ pyplot.axhline(y=0.8,  color='red')
 # TODO : compute value of x for which y=0.8 and show
 pyplot.plot(x, out_sum)
 pyplot.show()
-
-
-# In[ ]:
-
-
-
 
