@@ -13,32 +13,10 @@ stateToAnalyze ="Karnataka"
 # In[2]:
 
 
-#Download data from "https://github.com/CSSEGISandData/COVID-19.git"
-
-confirmedCsv = "COVID-19/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv"
-recoveredCsv = "COVID-19/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv"
-deathsCsv = "COVID-19/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv"
-
-try:
-    f = open(confirmedCsv)
-except IOError:
-    print('Download data from "https://github.com/CSSEGISandData/COVID-19.git"')
-    assert False
-finally:
-    f.close()
+get_ipython().run_line_magic('run', './Load-Data.ipynb')
 
 
 # In[3]:
-
-
-import pandas as pd
-
-confirmedDf = pd.read_csv(confirmedCsv)
-recoveredDf = pd.read_csv(recoveredCsv)
-deathsDf = pd.read_csv(deathsCsv)
-
-
-# In[4]:
 
 
 #from pandas_profiling import ProfileReport
@@ -51,7 +29,7 @@ deathsDf = pd.read_csv(deathsCsv)
 ##profile.to_notebook_iframe()
 
 
-# In[5]:
+# In[4]:
 
 
 from matplotlib import pyplot
@@ -67,7 +45,7 @@ pyplot.figure(1)
 pyplot.plot(confirmedTSDf)
 
 
-# In[6]:
+# In[5]:
 
 
 get_ipython().run_line_magic('matplotlib', 'inline')
@@ -80,7 +58,7 @@ pyplot.plot(dy_dt, label="dy/dt")
 pyplot.legend()
 
 
-# In[7]:
+# In[6]:
 
 
 d2y_dt2= np.diff(dy_dt)
@@ -91,7 +69,7 @@ pyplot.legend()
 
 # ## Compute SEIR parametes - alpha, beta, gamma
 
-# In[8]:
+# In[7]:
 
 
 countries = list([countryToAnalyze, "Pakistan"])
@@ -119,44 +97,10 @@ pyplot.legend()
 
 
 # # Analyze statewise for India 
-# 
-# Download data from - https://www.kaggle.com/sudalairajkumar/covid19-in-india
-# 
-
-# In[9]:
-
-
-from datetime import datetime
-
-covidDataFile = "covid19-in-india/covid_19_india.csv"
-populationFile = "covid19-in-india/population_india_census2011.csv"
-hospitalBedsFile = "covid19-in-india/HospitalBedsIndia.csv"
-icmrTestingFile = "covid19-in-india/ICMRTestingDetails.csv"
-
-try:
-    f = open(covidDataFile)
-except IOError:
-    print('Download data from "https://www.kaggle.com/sudalairajkumar/covid19-in-india"')
-    assert False
-finally:
-    f.close()
-    
-    
-def parser(x):
-    return datetime.strptime(x, '%d/%m/%y')
-
-def icmrDateParser(x):
-    return datetime.strptime(x, '%d/%m/%y %H:%M')
-
-covidIndiaDataDf = pd.read_csv(covidDataFile, parse_dates=[1], index_col=1, squeeze=True, date_parser=parser)
-populationDf = pd.read_csv(populationFile)
-hospitalBedsDf = pd.read_csv(hospitalBedsFile)
-icmrTestingDf = pd.read_csv(icmrTestingFile, parse_dates=[1], date_parser=icmrDateParser)
-
 
 # ## Capacity for maximum
 
-# In[10]:
+# In[8]:
 
 
 get_ipython().run_line_magic('matplotlib', 'inline')
@@ -167,7 +111,7 @@ hospitalBedsDf = hospitalBedsDf.fillna(-1)
 hospitalBedsDf = hospitalBedsDf.loc[hospitalBedsDf["State/UT"] != "All India"]
 hospitalBedsDf["State / Union Territory"] = hospitalBedsDf["State/UT"]
 
-populationHospitalBedsdf = pd.merge(populationDf, hospitalBedsDf, on=['State / Union Territory'])
+populationHospitalBedsdf = pd.merge(indiaPopulationDf, hospitalBedsDf, on=['State / Union Territory'])
 states = populationHospitalBedsdf["State / Union Territory"]
 
 fig, ax1 = pyplot.subplots(figsize=(20,10))
@@ -189,7 +133,7 @@ pyplot.legend()
 
 # ## State-wise numbers
 
-# In[11]:
+# In[9]:
 
 
 covidIndiaLastDayDataDf = pd.DataFrame(columns=covidIndiaDataDf.columns.values)
@@ -232,7 +176,7 @@ for state in states:
 covidIndiaLastDayDataDf.fillna(0, inplace=True)
 
 
-# In[12]:
+# In[10]:
 
 
 import seaborn as sns
@@ -278,7 +222,7 @@ for index, row in data.iterrows():
 
 # ## Testing to positive - trend and ratio
 
-# In[13]:
+# In[11]:
 
 
 fig, ax1 = pyplot.subplots(figsize=(20,10))
@@ -302,7 +246,7 @@ pyplot.legend()
 # 
 # Lower the better
 
-# In[14]:
+# In[12]:
 
 
 #Penalty for delay since first case
@@ -323,13 +267,13 @@ display(indexData)
 
 # # Analyze a particular State
 
-# In[15]:
+# In[13]:
 
 
 covidStateDataDf = covidIndiaDataDf.loc[covidIndiaDataDf["State/UnionTerritory"]==stateToAnalyze]
 
 
-# In[16]:
+# In[14]:
 
 
 get_ipython().run_line_magic('matplotlib', 'inline')
@@ -338,7 +282,7 @@ pyplot.plot(covidStateDataDf["ConfirmedIndianNational"].values, label="Confirmed
 pyplot.legend()
 
 
-# In[17]:
+# In[15]:
 
 
 dy_dt= np.diff(covidStateDataDf["ConfirmedIndianNational"].values)
@@ -347,7 +291,7 @@ pyplot.plot(dy_dt, label="dy/dt")
 pyplot.legend()
 
 
-# In[18]:
+# In[16]:
 
 
 d2y_dt2= np.diff(dy_dt)
@@ -356,7 +300,7 @@ pyplot.plot(d2y_dt2, label="d2y/dt2")
 pyplot.legend()
 
 
-# In[19]:
+# In[17]:
 
 
 usDataCsv = "us-counties.csv"
@@ -368,29 +312,14 @@ total_infected_us_timeseries = usDf_group_by_date['cases']
 total_removed_us_timeseries = usDf_group_by_date['deaths']
 
 
-# In[20]:
+# In[18]:
 
 
-provinceCsv = "covid19-in-italy/covid19_italy_province.csv"
-regionCsv = "covid19-in-italy/covid19_italy_region.csv"
-N = 60000000
-try:
-    f = open(confirmedCsv)
-except IOError:
-    print('Download data from "https://www.kaggle.com/sudalairajkumar/covid19-in-italy"')
-    assert False
-finally:
-    f.close()
-    
-import pandas as pd
-
-provinceDf = pd.read_csv(provinceCsv)
-regionDf = pd.read_csv(regionCsv)   
 
 
 from matplotlib import pyplot
 import numpy as np
-from mlxtend.plotting import ecdf
+#from mlxtend.plotting import ecdf
 from scipy import stats
 get_ipython().run_line_magic('matplotlib', 'inline')
 
@@ -449,81 +378,137 @@ pyplot.plot(x, out_sum)
 pyplot.show()
 
 
-# In[21]:
+# In[19]:
 
 
 get_ipython().run_line_magic('run', './SEIR-with-Social-Distancing.ipynb')
-def predictValues(alpha, beta, gamma, nSteps):
+def predictValues(alpha, beta, gamma, nSteps, N):
     init_vals = 1 - 1/N, 1/N, 0, 0
     params = alpha, beta, gamma
     dt = .1
     t = np.linspace(0, nSteps, int(nSteps/dt) + 1)
+#     print('Init values are:: ', init_vals)
+#     print('Number of steps are :: ', nSteps)
     results = base_seir_model(init_vals, params, t)
     return results
+
+
+# In[20]:
+
+
+def computeGamma(infected, removed):    
+    dR_dt= np.diff(removed)
+#     infectedTS = infected.values.flatten()
+    confirmedArr[confirmedArr == 0] = 0.0001 # to prevent divide by zero
+    gamma = dR_dt / infected[1:]
+    pyplot.plot(gamma, label='gamma')
+    pyplot.title('computeGamma')
+    pyplot.xticks(rotation=90)
+    pyplot.legend()
+    pyplot.show()  
+    return gamma.mean()
+
+
+# In[21]:
+
+
+def computeLoss(yhat, infected, removed):
+    offsetOfyHat = 0
+    offsetOfinfected = 0
+    if(len(infected)>len(yhat[2, :])):
+        offsetOfinfected = len(infected)-len(yhat[2, :])
+    else:
+        offsetOfyHat = len(yhat[2, :])-len(infected)
+    loss= infected[offsetOfinfected:] - yhat[2,offsetOfyHat:]
+    l1 = (loss*loss).sum()
+    
+    loss= (removed[offsetOfinfected:] - yhat[3,offsetOfyHat:])
+    l2 = (loss*loss).sum()
+    
+    weightForRecovered = 0.1
+    return weightForRecovered * l1 + (1 - weightForRecovered) * l2
 
 
 # In[22]:
 
 
-def computeLoss(yhat, infected, removed):
-    loss= infected - yhat[2,1:]
-    lossSum = (loss*loss).sum()
-    
-    loss= (removed - yhat[3,1:])*10
-    lossSum = (loss*loss).sum() + lossSum
-    return lossSum
-
-
-# In[23]:
-
-
 import numpy as np
-def estimateParameters(infected, removed):
+def estimateParameters(infected, removed, N):
     minLoss = -1
     minParams=[]
     lossHistory=[]
-    paramsHistory=[]
+    alphaHistory=[]
+    betaHistory=[]
+    gammaHistory=[]
     minYhat = None
-    nSteps = len(infected)/10
-    alphaSpace = np.arange(0,1,0.05)
-    betaSpace = np.arange(0,1,0.05)
+   
+    alphaSpace = np.arange(0.4,1,0.05)
+    betaSpace = np.arange(0.4,1,0.05)
     gammaSpace = np.arange(0,1,0.05)
+    for index in range(len(infected)):
+        if(infected[index]!=0):
+            break
+    infected = infected[index : ]
+    removed = removed[index : ]
+    nSteps = len(infected)/10
+    gamma = computeGamma(infected, removed)
     for alpha in alphaSpace:
         for beta in betaSpace:
-            for gamma in gammaSpace:
-                yhat = (predictValues(alpha, beta, gamma, nSteps)*N)
-                loss = computeLoss(yhat, infected, removed)
-                if(loss < minLoss) or (minLoss == -1):
-                    minLoss = loss
-                    minParams = [alpha, beta, gamma]
-                    minYhat = yhat
-                lossHistory.append(loss)
-                paramsHistory.append([alpha, beta, gamma])
+#             for gamma in gammaSpace:
+            
+            yhat = (predictValues(alpha, beta, gamma, nSteps, N)*N)
+            loss = computeLoss(yhat, infected, removed)
+            if(loss < minLoss) or (minLoss == -1):
+                minLoss = loss
+                minParams = [alpha, beta, gamma]
+                minYhat = yhat
+            lossHistory.append(loss)
+            alphaHistory.append(alpha)
+            betaHistory.append(beta)
+            gammaHistory.append(gamma)
+    pyplot.plot(alphaHistory, label='alpha')
+    pyplot.plot(betaHistory, label='beta')
+    pyplot.plot(gammaHistory, label='gamma')
+    pyplot.title('paramsHistory')
+    pyplot.legend()
+    pyplot.show()            
     pyplot.plot(lossHistory)
+    pyplot.title('lossHistory')
+    pyplot.legend()
     pyplot.show()
     pyplot.plot(minYhat[2,1:])
+    pyplot.title('minYhat[2,1:]')
+    pyplot.legend()
     pyplot.show()
     pyplot.plot(infected)
+    pyplot.title('infected')
+    pyplot.legend()
     pyplot.show()
     pyplot.plot(minYhat[3,1:])
+    pyplot.title('minYhat[3,1:]')
+    pyplot.legend()
     pyplot.show()
     pyplot.plot(removed)
+    pyplot.title('removed')
+    pyplot.legend()
     pyplot.show()
 #     Find index of minimum loss and return params for param history from that index
     return minParams
 
 
-# In[24]:
+# In[23]:
 
 
-params = estimateParameters(total_positive_cases_timeseries, total_removed_cases_timeseries)
+params = estimateParameters(total_positive_cases_timeseries, total_removed_cases_timeseries, N)
 print(params)
 
 
-# In[25]:
+# In[24]:
 
 
 countries = list([countryToAnalyze, "Pakistan", "Italy", "Spain", "France", "Iran", "China", "Germany", "United Kingdom"])
+# countries = list([countryToAnalyze, "Pakistan"])
+
 from pandas import *
 pyplot.figure(1)
 paramsResultDf = DataFrame({'Country': [], 'Params': []})
@@ -531,14 +516,16 @@ paramsResultDf = DataFrame({'Country': [], 'Params': []})
 #This is incomplete - WIP
 for country in countries:
     print(country)
+    N = int(populationDf [populationDf['Country']==country]['Population'])
+#     print('Population of ', country, 'is :: ', N )
     confirmedTSDf = confirmedDf.loc[confirmedDf["Country/Region"] == country].sum().T[4:]
     recoveredTSDf = recoveredDf.loc[recoveredDf["Country/Region"] == country].sum().T[4:]
     deathsTSDf = deathsDf.loc[deathsDf["Country/Region"] == country].sum().T[4:]
 #     removedArr = recoveredTSDf.values + deathsTSDf.values
-    params = estimateParameters(confirmedTSDf, (recoveredTSDf+deathsTSDf))
+    params = estimateParameters(confirmedTSDf, (recoveredTSDf+deathsTSDf), N)
     paramsResultDf = paramsResultDf.append({'Country': country , 'Params': params}, ignore_index=True)
-
-params_us = estimateParameters(total_infected_us_timeseries, total_removed_us_timeseries)  
+N = int(populationDf [populationDf['Country']=='United States']['Population'])
+params_us = estimateParameters(total_infected_us_timeseries, total_removed_us_timeseries, N)  
 paramsResultDf = paramsResultDf.append({'Country': "US" , 'Params': params_us}, ignore_index=True)
 print(paramsResultDf)
     
