@@ -58,13 +58,10 @@ def computeLoss(yhat, infected, removed):
     else:
         offsetOfyHat = len(yhat[2, :])-len(infected)
     loss= infected[offsetOfinfected:] - yhat[2,offsetOfyHat:]
-    #print("loss", loss)
     l1 = (loss*loss).sum()
     
     loss= (removed[offsetOfinfected:] - yhat[3,offsetOfyHat:])
     l2 = (loss*loss).sum()
-    
-    #print("l1-l2", l1, l2)
     
     weightForRecovered = 0.1
     return weightForRecovered * l1 + (1 - weightForRecovered) * l2
@@ -96,11 +93,7 @@ def estimateParameters(infected, removed, N, axs):
     for alpha in alphaSpace:
         for beta in betaSpace:
 #             for gamma in gammaSpace:
-            
             yhat = (predictValues(alpha, beta, gamma, nSteps, N))
-            #print("first value", yhat[:,0])
-            #print("last value", yhat[:,-1])
-            #print(yhat)
             loss = computeLoss(yhat, infected, removed)
             if(loss < minLoss) or (minLoss == -1):
                 minLoss = loss
@@ -141,6 +134,8 @@ def estimateParameters(infected, removed, N, axs):
 #params = estimateParameters(total_positive_cases_timeseries, total_removed_cases_timeseries, N)
 #print(params)
 
+
+# ## Run it for countries
 
 # In[8]:
 

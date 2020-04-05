@@ -3,7 +3,7 @@
 
 # # Load Data
 
-# ## For countries
+# ## Load all countries data
 
 # In[1]:
 
@@ -41,7 +41,7 @@ populationOfCountries = "population_by_country_2020.csv"
 populationDf = pd.read_csv(populationOfCountries)
 
 
-# ## Load for Italy
+# ## Load Italy data
 
 # In[4]:
 
@@ -61,7 +61,7 @@ provinceDf = pd.read_csv(provinceCsv)
 regionDf = pd.read_csv(regionCsv)   
 
 
-# ## Load for USA
+# ## Load USA data
 
 # In[5]:
 
@@ -75,7 +75,7 @@ total_infected_us_timeseries = usDf_group_by_date['cases']
 total_removed_us_timeseries = usDf_group_by_date['deaths']
 
 
-# ## Analyze statewise for India 
+# ## Load India data (statewise)
 # 
 # Download data from - https://www.kaggle.com/sudalairajkumar/covid19-in-india
 

@@ -177,7 +177,7 @@ for state in states:
 covidIndiaLastDayDataDf.fillna(0, inplace=True)
 
 
-# In[10]:
+# In[18]:
 
 
 import seaborn as sns
@@ -189,7 +189,7 @@ warnings.filterwarnings('ignore')
 get_ipython().run_line_magic('matplotlib', 'inline')
 sns.set()
 
-f, ax = pyplot.subplots(figsize=(12, 8))
+f, ax = pyplot.subplots(figsize=(18, 20))
 covidIndiaLastDayDataDf['Name of State / UT']=covidIndiaLastDayDataDf['State/UnionTerritory']
 covidIndiaLastDayDataDf['Total cases']=covidIndiaLastDayDataDf['Confirmed']
 covidIndiaLastDayDataDf['Cured/Discharged/Migrated']=covidIndiaLastDayDataDf['Cured']
