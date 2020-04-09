@@ -1,4 +1,4 @@
-# Demistifying modelling of epidemics like COVID-19, demonstrated with Jupyter notebooks
+# Demystifying modelling of epidemics like COVID-19, demonstrated with Jupyter notebooks
 
 COVID-19 has triggered creation of this repository. This repository would contain notebooks that analyze epidemic from different viewpoints. This is open for contribution and to build upon ideas.
 
